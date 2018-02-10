@@ -14,7 +14,7 @@ pl.plot(ob.S, np.float_(np.sign(ob.K1L)), '.b')
 sp1.set_ylim(-1.2, 1.2)
 pl.subplot(3,1,2,sharex=sp1)
 pl.plot(ob.S, ob.BETX, '-b')
-pl.plot(ob.S, ob.BETY, '-b')
+pl.plot(ob.S, ob.BETY, '-r')
 pl.subplot(3,1,3,sharex=sp1)
 pl.plot(ob.S, ob.DX, '.-')
 

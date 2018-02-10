@@ -35,12 +35,34 @@ select,flag=twiss,column=name,s,x,y,mux,betx,
                          muy,bety,dx,dy, angle, k0l, k1l;
 twiss,save,centre,file=twiss.out;
 
+! another twiss saving the betas
+use, period=toyring;
 savebeta, label = leftb0, place = at_qf_ss0L_cell0;
 savebeta, label = rightb0, place = at_qf_ss0R_cell0;
+select,flag=twiss,column=name,s,mux,muy,betx,alfx,bety,alfy,dx;
+twiss,centre,file=twiss.out;
+
+! twiss only the IR
+use, sequence=toyring, range=at_qf_ss0L_cell0/at_qf_ss0R_cell0;
+twiss, beta0=leftb0,sequence=toyring,file=twissIR.out; 
+
+kqd1 = 0.0;
+use, sequence=toyring, range=at_qf_ss0L_cell0/at_IP0; 
+match, sequence=toyring,beta0=leftb0;
+   vary,name=kqf3, step=0.00001;
+   vary,name=kqd3, step=0.00001;
+   vary,name=kqf2, step=0.00001;
+   vary,name=kqd2, step=0.00001;
+   vary,name=kqf1, step=0.00001;
+   constraint,range=at_IP0,sequence=toyring,betx=10.0,bety=10.0,alfx=0.0,
+                                        alfy=0.0,dx=0.0,dpx=0.0;
+Lmdif, calls=100, tolerance=1.0e-21; endmatch;
 
 
-plot, haxis=s, vaxis=betx, bety, colour=100;
-plot, haxis=s, vaxis=dx, dy, colour=100;
+use, sequence=toyring;
+twiss, sequence=toyring,file=twiss.out;
+
+
 stop;
 
 
