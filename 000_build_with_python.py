@@ -7,17 +7,18 @@ n_cells_arc = 16 # to have zero dispersionin the SS needs to be a multiple of 4
 n_arcs = 4
 n_dip_half_cell = 3
 n_cells_straight = 6
+n_cells_insertion = 6
 
 frac_q_x = .27
 frac_q_y = .295
 Qpx = 15.
 Qpy = 20.
 
-Qx = n_arcs*(n_cells_arc+n_cells_straight+4)*phase_adv_cell/2./np.pi + frac_q_x
-Qy = n_arcs*(n_cells_arc+n_cells_straight+4)*phase_adv_cell/2./np.pi + frac_q_y
+Qx = n_arcs*(n_cells_arc+n_cells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + frac_q_x
+Qy = n_arcs*(n_cells_arc+n_cells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + frac_q_y
 
 #Assumes DS made by an empty cell and a full cell
-circum = n_arcs*(n_cells_arc+n_cells_straight+4)*L_halfcell*2.
+circum = n_arcs*(n_cells_arc+n_cells_straight+4+n_cells_insertion)*L_halfcell*2.
 n_dip_total = n_arcs*(n_cells_arc+2)*n_dip_half_cell*2
 
 # Bending angle
@@ -53,6 +54,24 @@ qd: multipole,knl:={0,kqd};
 sf: multipole,knl:={0,0,ksf};
 sd: multipole,knl:={0,0,ksd};'''
 
+
+sequence+='''
+kqf1:=kqf;
+kqd1:=kqd;
+kqf2:=kqf;
+kqd2:=kqd;
+kqf3:=kqf;
+kqd3:=kqd;
+kqf4:=kqf;
+kqd4:=kqd;
+qf1: multipole,knl:={0,kqf1};
+qd1: multipole,knl:={0,kqd1};
+qf2: multipole,knl:={0,kqf2};
+qd2: multipole,knl:={0,kqd2};
+qf3: multipole,knl:={0,kqf3};
+qd3: multipole,knl:={0,kqd3};
+qf4: multipole,knl:={0,kqf4};
+qd4: multipole,knl:={0,kqd4};'''
 
 sequence+='''
 
@@ -117,12 +136,30 @@ for i_arc in xrange(n_arcs):
 
 	#Straight
 	for i_cell in xrange(n_cells_straight):
-		
 		sequence += 'qf_ss%d_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
 		sequence += 'qd_ss%d_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
-
 		s_start_cell += L_halfcell*2
 
+	#Insertion
+	sequence += 'qf3L_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd3L_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	sequence += 'qf2L_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd2L_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	sequence += 'qf1L_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd1_ss%d: qd1, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+
+	sequence += 'qf1R_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd2R_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	sequence += 'qf2R_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd3R_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	sequence += 'qf3R_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd4R_ss%d: qd4, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
 
 sequence+='''
 
