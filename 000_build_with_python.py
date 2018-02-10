@@ -3,7 +3,7 @@ import numpy as np
 
 L_halfcell = 50.
 phase_adv_cell = np.pi/2
-n_cells_arc = 24 # to have zero dispersionin the SS needs to be a multiple of 4 
+n_cells_arc = 4 # to have zero dispersionin the SS needs to be a multiple of 4 
 n_arcs = 8
 n_dip_half_cell = 3
 
@@ -26,16 +26,26 @@ k1l_quad = 1./focal_length
 sequence = ''
 
 sequence+='''
+!Quad strengths (to be matched)
 kqf:=%e;'''%k1l_quad
 sequence+='''
 kqd:=%e;'''%(-k1l_quad)
+
+# sequence+='''
+
+# !Sext strengths (to be matched)
+# ksf:=0.;'''
+# sequence+='''
+# ksd:=0.;'''
 
 sequence+='''
 
 mb: multipole,knl=%e;'''%b_ang
 sequence+='''
 qf: multipole,knl:={0,kqf};
-qd: multipole,knl:={0,kqd};'''
+qd: multipole,knl:={0,kqd};
+sf: multipole,knl:={0,0,ksf};
+sd: multipole,knl:={0,0,ksd};'''
 
 
 sequence+='''
@@ -50,12 +60,14 @@ for i_arc in xrange(n_arcs):
 	for i_cell in xrange(n_cells_arc):
 		
 		sequence += 'qf_arc%d_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
+		sequence += 'sf_arc%d_cell%d: sf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
 		
 		for i_bend in xrange(n_dip_half_cell):
 			sequence += 'mb_arc%d_cell%d_%d: mb, at=%e;\n'%(i_arc, i_cell, i_bend, 
 									s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
 
-		sequence += 'qd_arc%d_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		#sequence += 'qd_arc%d_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		#sequence += 'sd_arc%d_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
 
 		for i_bend in xrange(n_dip_half_cell):
 			sequence += 'mb_arc%d_cell%d_%d: mb, at=%e;\n'%(i_arc, i_cell, i_bend+n_dip_half_cell, 
