@@ -10,6 +10,8 @@ n_regcells_straight = 2
 n_cells_insertion = 6 # don't touch
 betastar = 10.
 
+squeezed_IPs = [0,1,2,3] #zero must be there
+
 frac_q_x = .27
 frac_q_y = .295
 Qpx = 15.
@@ -142,27 +144,51 @@ for i_arc in xrange(n_arcs):
 		sequence += 'qd_ss%dL_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
 		s_start_cell += L_halfcell*2
 
-	#Insertion
-	sequence += 'qf3L_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd3L_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
-	sequence += 'qf2L_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd2L_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
-	sequence += 'qf1L_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd1_ss%d: qd1, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	sequence += 'at_IP%d: marker at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
+	if i_arc in squeezed_IPs:
+		#Insertion
+		sequence += 'qf3L_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd3L_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf2L_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd2L_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf1L_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd1_ss%d: qd1, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		sequence += 'at_IP%d: marker at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
 
-	sequence += 'qf1R_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd2R_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
-	sequence += 'qf2R_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd3R_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
-	sequence += 'qf3R_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd4R_ss%d: qd4, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
+		sequence += 'qf1R_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd2R_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf2R_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd3R_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf3R_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd4R_ss%d: qd4, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+	else:
+		#Insertion
+		sequence += 'qf3L_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd3L_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf2L_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd2L_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf1L_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd1_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		sequence += 'at_IP%d: marker at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+
+		sequence += 'qf1R_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd2R_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf2R_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd3R_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf3R_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd4R_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+
 
 	for i_cell in xrange(n_regcells_straight/2):
 		sequence += 'at_qf_ss%dR_cell%d: marker at=%e;\n'%(i_arc, i_cell, s_start_cell)
