@@ -8,6 +8,7 @@ n_arcs = 4
 n_dip_half_cell = 3
 n_regcells_straight = 6
 n_cells_insertion = 6 # don't touch
+betastar = 10.
 
 frac_q_x = .27
 frac_q_y = .295
@@ -239,7 +240,7 @@ match, sequence=toyring,beta0=leftb0;
    vary,name=kqf2, step=0.00001;
    vary,name=kqd2, step=0.00001;
    vary,name=kqf1, step=0.00001;
-   constraint,range=at_IP0,sequence=toyring,betx=10.0,bety=10.0,alfx=0.0,
+   constraint,range=at_IP0,sequence=toyring,betx=!!betastar!!,bety=!!betastar!!,alfx=0.0,
                                         alfy=0.0,dx=0.0,dpx=0.0;
 Lmdif, calls=100, tolerance=1.0e-21; endmatch;
 
@@ -251,8 +252,8 @@ twiss, sequence=toyring,file=twiss.out;
 stop;
 
 
-'''.replace('!!Qx!!', '%e'%Qx).replace('!!Qy!!', '%e'%Qy).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)
-
+'''.replace('!!Qx!!', '%e'%Qx).replace('!!Qy!!', '%e'%Qy).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)\
+    .replace('!!betastar!!', '%e'%betastar)
 
 with open('automad.madx', 'w') as fid:
 	fid.write(madxscript)

@@ -54,7 +54,7 @@ match, sequence=toyring,beta0=leftb0;
    vary,name=kqf2, step=0.00001;
    vary,name=kqd2, step=0.00001;
    vary,name=kqf1, step=0.00001;
-   constraint,range=at_IP0,sequence=toyring,betx=10.0,bety=10.0,alfx=0.0,
+   constraint,range=at_IP0,sequence=toyring,betx=5.000000e+00,bety=5.000000e+00,alfx=0.0,
                                         alfy=0.0,dx=0.0,dpx=0.0;
 Lmdif, calls=100, tolerance=1.0e-21; endmatch;
 
