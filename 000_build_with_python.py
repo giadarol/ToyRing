@@ -266,10 +266,27 @@ import metaclass as mtc
 fname = 'twiss.out'
 ob = mtc.twiss(fname)
 
-Qx_integ = np.round(ob.Q1)
-Qy_integ = np.round(ob.Q2)
+print('Obtained: Q1=%.4f Q2=%.4f'%(ob.Q1, ob.Q2))
+
+# #strategy 1
+# Qx_integ = np.floor(ob.Q1)
+# Qy_integ = np.floor(ob.Q2)
+# Qx_target = Qx_integ + frac_q_x
+# Qy_target = Qy_integ + frac_q_y
+
+# if np.abs(Qx_target-ob.Q1)>np.abs(Qx_target+1.-ob.Q1):
+# 	Qx_target = Qx_target+1.
+# if np.abs(Qy_target-ob.Q2)>np.abs(Qy_target+1.-ob.Q2):
+# 	Qy_target = Qy_target+1.
+
+#strategy 2
+Qx_integ = np.ceil(ob.Q1)
+Qy_integ = np.floor(ob.Q2)
 Qx_target = Qx_integ + frac_q_x
 Qy_target = Qy_integ + frac_q_y
+
+
+print('Targets: Qx=%.4f Q2=%.4f'%(Qx_target, Qy_target))
 
 madxscript = madxscript.replace('stop;', '')
 
