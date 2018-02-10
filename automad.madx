@@ -16,8 +16,8 @@ use, sequence=toyring;
 match, sequence=toyring; 
 	vary,name=kqf, step=0.00001; 
 	vary,name=kqd, step=0.00001; 
-	global,sequence=toyring,Q1=4.827000e+01; 
-	global,sequence=toyring,Q2=4.829500e+01; 
+	global,sequence=toyring,Q1=2.627000e+01; 
+	global,sequence=toyring,Q2=2.629500e+01; 
 	Lmdif, calls=10, tolerance=1.0e-21;
 endmatch;
 

@@ -4,17 +4,19 @@ import numpy as np
 L_halfcell = 50.
 phase_adv_cell = np.pi/2
 n_cells_arc = 24 # to have zero dispersionin the SS needs to be a multiple of 4 
-n_arcs = 8
+n_arcs = 4
 n_dip_half_cell = 3
+n_cells_straight = 2
+
 frac_q_x = .27
 frac_q_y = .295
 Qpx = 15.
 Qpy = 20.
 
-Qx = n_arcs*n_cells_arc*phase_adv_cell/2./np.pi + frac_q_x
-Qy = n_arcs*n_cells_arc*phase_adv_cell/2./np.pi + frac_q_y
+Qx = n_arcs*(n_cells_arc+n_cells_straight)*phase_adv_cell/2./np.pi + frac_q_x
+Qy = n_arcs*(n_cells_arc+n_cells_straight)*phase_adv_cell/2./np.pi + frac_q_y
 
-circum = n_arcs*n_cells_arc*L_halfcell*2.
+circum = n_arcs*(n_cells_arc+n_cells_straight)*L_halfcell*2.
 
 n_dip_total = n_arcs*n_cells_arc*n_dip_half_cell*2
 
@@ -76,6 +78,13 @@ for i_arc in xrange(n_arcs):
 		for i_bend in xrange(n_dip_half_cell):
 			sequence += 'mb_arc%d_cell%d_%d: mb, at=%e;\n'%(i_arc, i_cell, i_bend+n_dip_half_cell, 
 									s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
+
+		s_start_cell += L_halfcell*2
+
+	for i_cell in xrange(n_cells_straight):
+		
+		sequence += 'qf_ss%d_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
+		sequence += 'qd_ss%d_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
 
 		s_start_cell += L_halfcell*2
 
