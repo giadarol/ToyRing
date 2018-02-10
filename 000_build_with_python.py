@@ -15,8 +15,8 @@ frac_q_y = .295
 Qpx = 15.
 Qpy = 20.
 
-Qx = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + frac_q_x
-Qy = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + frac_q_y
+Qx = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + 0.01
+Qy = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + 0.02
 
 #Assumes DS made by an empty cell and a full cell
 circum = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*L_halfcell*2.
@@ -279,11 +279,6 @@ if np.abs(Qx_target-ob.Q1)>np.abs(Qx_target+1.-ob.Q1):
 if np.abs(Qy_target-ob.Q2)>np.abs(Qy_target+1.-ob.Q2):
 	Qy_target = Qy_target+1.
 
-# #strategy 2
-# Qx_integ = np.ceil(ob.Q1)
-# Qy_integ = np.floor(ob.Q2)
-# Qx_target = Qx_integ + frac_q_x
-# Qy_target = Qy_integ + frac_q_y
 
 
 print('Targets: Qx=%.4f Q2=%.4f'%(Qx_target, Qy_target))
