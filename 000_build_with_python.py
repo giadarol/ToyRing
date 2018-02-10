@@ -3,10 +3,10 @@ import numpy as np
 
 L_halfcell = 50.
 phase_adv_cell = np.pi/3
-n_cells_arc = 16 # to have zero dispersionin the SS needs to be a multiple of 4 
-n_arcs = 4
+n_cells_arc = 23 # to have zero dispersionin the SS needs to be a multiple of 4 
+n_arcs = 8
 n_dip_half_cell = 3
-n_regcells_straight = 6
+n_regcells_straight = 2
 n_cells_insertion = 6 # don't touch
 betastar = 10.
 
@@ -261,5 +261,36 @@ with open('automad.madx', 'w') as fid:
 import os
 os.system('../madx automad.madx')
 
+# Rematch fractional tunes and chromaticity
+import metaclass as mtc
+fname = 'twiss.out'
+ob = mtc.twiss(fname)
 
+Qx_integ = np.round(ob.Q1)
+Qy_integ = np.round(ob.Q2)
+Qx_target = Qx_integ + frac_q_x
+Qy_target = Qy_integ + frac_q_y
 
+madxscript = madxscript.replace('stop;', '')
+
+madxscript+='''
+! re-match tune 
+match, sequence=toyring; 
+	vary,name=kqf, step=0.00001; 
+	vary,name=kqd, step=0.00001; 
+	global,sequence=toyring,Q1=!!Qx_target!!; 
+	global,sequence=toyring,Q2=!!Qy_target!!; 
+	Lmdif, calls=10, tolerance=1.0e-21;
+endmatch;
+
+use, sequence=toyring;
+twiss, sequence=toyring,file=twiss.out;
+
+stop;
+
+'''.replace('!!Qx_target!!','%e'%Qx_target).replace('!!Qy_target!!','%e'%Qy_target)
+
+import os
+with open('automad.madx', 'w') as fid:
+	fid.write(madxscript)
+os.system('../madx automad.madx')

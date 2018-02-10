@@ -16,8 +16,8 @@ use, sequence=toyring;
 match, sequence=toyring; 
 	vary,name=kqf, step=0.00001; 
 	vary,name=kqd, step=0.00001; 
-	global,sequence=toyring,Q1=2.160333e+01; 
-	global,sequence=toyring,Q2=2.162833e+01; 
+	global,sequence=toyring,Q1=4.693667e+01; 
+	global,sequence=toyring,Q2=4.696167e+01; 
 	Lmdif, calls=10, tolerance=1.0e-21;
 endmatch;
 
@@ -54,7 +54,7 @@ match, sequence=toyring,beta0=leftb0;
    vary,name=kqf2, step=0.00001;
    vary,name=kqd2, step=0.00001;
    vary,name=kqf1, step=0.00001;
-   constraint,range=at_IP0,sequence=toyring,betx=5.000000e+00,bety=5.000000e+00,alfx=0.0,
+   constraint,range=at_IP0,sequence=toyring,betx=1.000000e+01,bety=1.000000e+01,alfx=0.0,
                                         alfy=0.0,dx=0.0,dpx=0.0;
 Lmdif, calls=100, tolerance=1.0e-21; endmatch;
 
@@ -63,6 +63,21 @@ use, sequence=toyring;
 twiss, sequence=toyring,file=twiss.out;
 
 
-stop;
 
+
+
+
+! re-match tune 
+match, sequence=toyring; 
+	vary,name=kqf, step=0.00001; 
+	vary,name=kqd, step=0.00001; 
+	global,sequence=toyring,Q1=4.527000e+01; 
+	global,sequence=toyring,Q2=5.029500e+01; 
+	Lmdif, calls=10, tolerance=1.0e-21;
+endmatch;
+
+use, sequence=toyring;
+twiss, sequence=toyring,file=twiss.out;
+
+stop;
 
