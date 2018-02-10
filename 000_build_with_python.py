@@ -4,7 +4,7 @@ import numpy as np
 L_halfcell = 50.
 phase_adv_cell = np.pi/3
 n_cells_arc = 23 # to have zero dispersionin the SS needs to be a multiple of 4 
-n_arcs = 8
+n_arcs = 4
 n_dip_half_cell = 3
 n_regcells_straight = 2
 n_cells_insertion = 6 # don't touch
@@ -268,22 +268,22 @@ ob = mtc.twiss(fname)
 
 print('Obtained: Q1=%.4f Q2=%.4f'%(ob.Q1, ob.Q2))
 
-# #strategy 1
-# Qx_integ = np.floor(ob.Q1)
-# Qy_integ = np.floor(ob.Q2)
-# Qx_target = Qx_integ + frac_q_x
-# Qy_target = Qy_integ + frac_q_y
-
-# if np.abs(Qx_target-ob.Q1)>np.abs(Qx_target+1.-ob.Q1):
-# 	Qx_target = Qx_target+1.
-# if np.abs(Qy_target-ob.Q2)>np.abs(Qy_target+1.-ob.Q2):
-# 	Qy_target = Qy_target+1.
-
-#strategy 2
-Qx_integ = np.ceil(ob.Q1)
+#strategy 1
+Qx_integ = np.floor(ob.Q1)
 Qy_integ = np.floor(ob.Q2)
 Qx_target = Qx_integ + frac_q_x
 Qy_target = Qy_integ + frac_q_y
+
+if np.abs(Qx_target-ob.Q1)>np.abs(Qx_target+1.-ob.Q1):
+	Qx_target = Qx_target+1.
+if np.abs(Qy_target-ob.Q2)>np.abs(Qy_target+1.-ob.Q2):
+	Qy_target = Qy_target+1.
+
+# #strategy 2
+# Qx_integ = np.ceil(ob.Q1)
+# Qy_integ = np.floor(ob.Q2)
+# Qx_target = Qx_integ + frac_q_x
+# Qy_target = Qy_integ + frac_q_y
 
 
 print('Targets: Qx=%.4f Q2=%.4f'%(Qx_target, Qy_target))

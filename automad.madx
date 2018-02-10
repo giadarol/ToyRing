@@ -16,8 +16,8 @@ use, sequence=toyring;
 match, sequence=toyring; 
 	vary,name=kqf, step=0.00001; 
 	vary,name=kqd, step=0.00001; 
-	global,sequence=toyring,Q1=4.693667e+01; 
-	global,sequence=toyring,Q2=4.696167e+01; 
+	global,sequence=toyring,Q1=2.360333e+01; 
+	global,sequence=toyring,Q2=2.362833e+01; 
 	Lmdif, calls=10, tolerance=1.0e-21;
 endmatch;
 
@@ -71,8 +71,8 @@ twiss, sequence=toyring,file=twiss.out;
 match, sequence=toyring; 
 	vary,name=kqf, step=0.00001; 
 	vary,name=kqd, step=0.00001; 
-	global,sequence=toyring,Q1=4.527000e+01; 
-	global,sequence=toyring,Q2=4.929500e+01; 
+	global,sequence=toyring,Q1=2.227000e+01; 
+	global,sequence=toyring,Q2=2.529500e+01; 
 	Lmdif, calls=10, tolerance=1.0e-21;
 endmatch;
 
