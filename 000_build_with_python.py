@@ -3,12 +3,16 @@ import numpy as np
 
 L_halfcell = 50.
 phase_adv_cell = np.pi/2
-n_cells_arc = 4 # to have zero dispersionin the SS needs to be a multiple of 4 
+n_cells_arc = 24 # to have zero dispersionin the SS needs to be a multiple of 4 
 n_arcs = 8
 n_dip_half_cell = 3
+frac_q_x = .27
+frac_q_y = .295
+Qpx = 15.
+Qpy = 20.
 
-Qx = n_arcs*n_cells_arc*phase_adv_cell/2./np.pi + .27
-Qy = n_arcs*n_cells_arc*phase_adv_cell/2./np.pi + .295
+Qx = n_arcs*n_cells_arc*phase_adv_cell/2./np.pi + frac_q_x
+Qy = n_arcs*n_cells_arc*phase_adv_cell/2./np.pi + frac_q_y
 
 circum = n_arcs*n_cells_arc*L_halfcell*2.
 
@@ -31,12 +35,12 @@ kqf:=%e;'''%k1l_quad
 sequence+='''
 kqd:=%e;'''%(-k1l_quad)
 
-# sequence+='''
+sequence+='''
 
-# !Sext strengths (to be matched)
-# ksf:=0.;'''
-# sequence+='''
-# ksd:=0.;'''
+!Sext strengths (to be matched)
+ksf:=0.01;''' # match needs to start from a non zero value
+sequence+='''
+ksd:=0.01;''' # match needs to start from a non zero value
 
 sequence+='''
 
@@ -66,8 +70,8 @@ for i_arc in xrange(n_arcs):
 			sequence += 'mb_arc%d_cell%d_%d: mb, at=%e;\n'%(i_arc, i_cell, i_bend, 
 									s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
 
-		#sequence += 'qd_arc%d_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
-		#sequence += 'sd_arc%d_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		sequence += 'qd_arc%d_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		sequence += 'sd_arc%d_cell%d: sd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
 
 		for i_bend in xrange(n_dip_half_cell):
 			sequence += 'mb_arc%d_cell%d_%d: mb, at=%e;\n'%(i_arc, i_cell, i_bend+n_dip_half_cell, 
@@ -113,6 +117,15 @@ match, sequence=toyring;
 	Lmdif, calls=10, tolerance=1.0e-21;
 endmatch;
 
+! match chromaticity 
+match, sequence=toyring; 
+	vary,name=ksf, step=0.00001; 
+	vary,name=ksd, step=0.00001; 
+	global,sequence=toyring,DQ1=!!Qpx!!; 
+	global,sequence=toyring,DQ2=!!Qpy!!; 
+	Lmdif, calls=10, tolerance=1.0e-21;
+endmatch;
+
 ! execute the TWISS command 
 select,flag=twiss,column=name,s,x,y,mux,betx,
                          muy,bety,dx,dy;
@@ -121,7 +134,8 @@ plot, haxis=s, vaxis=betx, bety, colour=100;
 stop;
 
 
-'''.replace('!!Qx!!', '%e'%Qx).replace('!!Qy!!', '%e'%Qy)
+'''.replace('!!Qx!!', '%e'%Qx).replace('!!Qy!!', '%e'%Qy).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)
+
 
 with open('automad.madx', 'w') as fid:
 	fid.write(madxscript)
