@@ -42,7 +42,7 @@
 @ TITLE            %07s "Toyring"
 @ ORIGIN           %17s "5.03.07 Darwin 64"
 @ DATE             %08s "09/02/18"
-@ TIME             %08s "20.52.24"
+@ TIME             %08s "20.53.35"
 * NAME                                S                  X                  Y                MUX               BETX                MUY               BETY                 DX                 DY 
 $ %s                                %le                %le                %le                %le                %le                %le                %le                %le                %le 
  "TOYRING$START"                      0                  0                  0                  0        171.0536873                  0        28.95433945        2.198076315                  0

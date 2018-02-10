@@ -35,6 +35,7 @@ select,flag=twiss,column=name,s,x,y,mux,betx,
                          muy,bety,dx,dy;
 twiss,save,centre,file=twiss.out;
 plot, haxis=s, vaxis=betx, bety, colour=100;
+plot, haxis=s, vaxis=dx, dy, colour=100;
 stop;
 
 
