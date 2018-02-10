@@ -3,7 +3,7 @@ import numpy as np
 
 L_halfcell = 50.
 phase_adv_cell = np.pi/3
-n_cells_arc = 23 # to have zero dispersionin the SS needs to be a multiple of 4 
+n_cells_arc = 23 
 n_arcs = 4
 n_dip_half_cell = 3
 n_regcells_straight = 2
@@ -295,12 +295,22 @@ match, sequence=toyring;
 	Lmdif, calls=10, tolerance=1.0e-21;
 endmatch;
 
+! re-match chromaticity 
+match, sequence=toyring; 
+	vary,name=ksf, step=0.00001; 
+	vary,name=ksd, step=0.00001; 
+	global,sequence=toyring,DQ1=!!Qpx!!; 
+	global,sequence=toyring,DQ2=!!Qpy!!; 
+	Lmdif, calls=10, tolerance=1.0e-21;
+endmatch;
+
 use, sequence=toyring;
 twiss, sequence=toyring,file=twiss.out;
 
 stop;
 
-'''.replace('!!Qx_target!!','%e'%Qx_target).replace('!!Qy_target!!','%e'%Qy_target)
+'''.replace('!!Qx_target!!','%e'%Qx_target).replace('!!Qy_target!!','%e'%Qy_target).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)
+    
 
 import os
 with open('automad.madx', 'w') as fid:

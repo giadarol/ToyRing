@@ -76,6 +76,15 @@ match, sequence=toyring;
 	Lmdif, calls=10, tolerance=1.0e-21;
 endmatch;
 
+! re-match chromaticity 
+match, sequence=toyring; 
+	vary,name=ksf, step=0.00001; 
+	vary,name=ksd, step=0.00001; 
+	global,sequence=toyring,DQ1=1.500000e+01; 
+	global,sequence=toyring,DQ2=2.000000e+01; 
+	Lmdif, calls=10, tolerance=1.0e-21;
+endmatch;
+
 use, sequence=toyring;
 twiss, sequence=toyring,file=twiss.out;
 

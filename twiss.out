@@ -21,8 +21,8 @@
 @ GAMMATR          %le         19.78328153
 @ Q1               %le               22.27
 @ Q2               %le              24.295
-@ DQ1              %le         5.290357446
-@ DQ2              %le        -5.672498228
+@ DQ1              %le                  15
+@ DQ2              %le                  20
 @ DXMAX            %le         7.894329899
 @ DYMAX            %le                   0
 @ XCOMAX           %le                   0
@@ -42,7 +42,7 @@
 @ TITLE            %07s "Toyring"
 @ ORIGIN           %17s "5.03.07 Darwin 64"
 @ DATE             %08s "10/02/18"
-@ TIME             %08s "05.35.41"
+@ TIME             %08s "05.40.21"
 * NAME                                S                  X                  Y                MUX               BETX                MUY               BETY                 DX                 DY              ANGLE                K0L                K1L               ALFX               ALFY 
 $ %s                                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le 
  "TOYRING$START"                      0                  0                  0                  0        174.3114295                  0        59.25749502      0.01649773619                  0                  0                  0                  0       -1.710830621       0.6489794184
