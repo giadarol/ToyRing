@@ -2,23 +2,23 @@ import numpy as np
 
 
 L_halfcell = 50.
-phase_adv_cell = np.pi/2
-n_cells_arc = 24 # to have zero dispersionin the SS needs to be a multiple of 4 
+phase_adv_cell = np.pi/3
+n_cells_arc = 16 # to have zero dispersionin the SS needs to be a multiple of 4 
 n_arcs = 4
 n_dip_half_cell = 3
-n_cells_straight = 2
+n_cells_straight = 6
 
 frac_q_x = .27
 frac_q_y = .295
 Qpx = 15.
 Qpy = 20.
 
-Qx = n_arcs*(n_cells_arc+n_cells_straight)*phase_adv_cell/2./np.pi + frac_q_x
-Qy = n_arcs*(n_cells_arc+n_cells_straight)*phase_adv_cell/2./np.pi + frac_q_y
+Qx = n_arcs*(n_cells_arc+n_cells_straight+4)*phase_adv_cell/2./np.pi + frac_q_x
+Qy = n_arcs*(n_cells_arc+n_cells_straight+4)*phase_adv_cell/2./np.pi + frac_q_y
 
-circum = n_arcs*(n_cells_arc+n_cells_straight)*L_halfcell*2.
-
-n_dip_total = n_arcs*n_cells_arc*n_dip_half_cell*2
+#Assumes DS made by an empty cell and a full cell
+circum = n_arcs*(n_cells_arc+n_cells_straight+4)*L_halfcell*2.
+n_dip_total = n_arcs*(n_cells_arc+2)*n_dip_half_cell*2
 
 # Bending angle
 b_ang = 2.*np.pi/n_dip_total
@@ -63,6 +63,24 @@ toyring: sequence, refer=centre, l=circum;
 
 s_start_cell = 0.
 for i_arc in xrange(n_arcs):
+
+
+	#Dispesion suppressor - full cell
+	sequence += 'qf_arc%d_dsleftf: qf, at=%e;\n'%(i_arc, s_start_cell)	
+	for i_bend in xrange(n_dip_half_cell):
+		sequence += 'mb_arc%d_dsleft_%d: mb, at=%e;\n'%(i_arc, i_bend, 
+								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
+	sequence += 'qd_arc%d_dsleftf: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	for i_bend in xrange(n_dip_half_cell):
+		sequence += 'mb_arc%d_dsleft_%d: mb, at=%e;\n'%(i_arc, i_bend+n_dip_half_cell, 
+								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
+	s_start_cell += L_halfcell*2
+	#Dispesion suppressor - empty cell
+	sequence += 'qf_arc%d_dslefte: qf, at=%e;\n'%(i_arc, s_start_cell)	
+	sequence += 'qd_arc%d_dslefte: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	
+	#Arc
 	for i_cell in xrange(n_cells_arc):
 		
 		sequence += 'qf_arc%d_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
@@ -81,6 +99,23 @@ for i_arc in xrange(n_arcs):
 
 		s_start_cell += L_halfcell*2
 
+	#Dispesion suppressor - empty cell
+	sequence += 'qf_arc%d_dsrighte: qf, at=%e;\n'%(i_arc, s_start_cell)	
+	sequence += 'qd_arc%d_dsrighte: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	#Dispesion suppressor - full cell
+	sequence += 'qf_arc%d_dsrightf: qf, at=%e;\n'%(i_arc, s_start_cell)	
+	for i_bend in xrange(n_dip_half_cell):
+		sequence += 'mb_arc%d_dsright_%d: mb, at=%e;\n'%(i_arc, i_bend, 
+								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
+	sequence += 'qd_arc%d_dsrightdf: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	for i_bend in xrange(n_dip_half_cell):
+		sequence += 'mb_arc%d_dsright_%d: mb, at=%e;\n'%(i_arc, i_bend+n_dip_half_cell, 
+								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
+	s_start_cell += L_halfcell*2
+
+
+	#Straight
 	for i_cell in xrange(n_cells_straight):
 		
 		sequence += 'qf_ss%d_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
@@ -137,7 +172,7 @@ endmatch;
 
 ! execute the TWISS command 
 select,flag=twiss,column=name,s,x,y,mux,betx,
-                         muy,bety,dx,dy;
+                         muy,bety,dx,dy, angle, k0l, k1l;
 twiss,save,centre,file=twiss.out;
 plot, haxis=s, vaxis=betx, bety, colour=100;
 plot, haxis=s, vaxis=dx, dy, colour=100;
