@@ -1,0 +1,14 @@
+
+TITLE, ’Toyring’; 
+
+call file="sequence.seq";
+!define the beam and its properties
+beam, particle = proton, sequence=toyring, energy = 6500.,NPART=1.05E11, sige= 2.5e;
+! define the desired output
+use, sequence=toyring; 
+select,flag=twiss,column=name,s,x,y,mux,betx,
+                         muy,bety,dx,dy;
+! execute the TWISS command 
+twiss,save,centre,file=twiss.out;
+plot, haxis=s, vaxis=betx, bety, colour=100;
+stop;

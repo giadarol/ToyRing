@@ -1,0 +1,31 @@
+
+TITLE, 'Toyring'; 
+call file="sequence.seq";
+
+!define the beam and its properties
+beam, particle = proton, sequence=toyring, energy = 6500.,NPART=1.05E11, sige= 2.5e;
+
+! define the desired output
+use, sequence=toyring; 
+
+
+! execute the TWISS command 
+!twiss,save,centre,file=twiss.out;
+
+
+match, sequence=toyring; 
+	vary,name=kqf, step=0.00001; 
+	vary,name=kqd, step=0.00001; 
+	global,sequence=toyring,Q1=3.85; 
+	global,sequence=toyring,Q2=3.86; 
+	Lmdif, calls=10, tolerance=1.0e-21;
+endmatch;
+
+! execute the TWISS command 
+select,flag=twiss,column=name,s,x,y,mux,betx,
+                         muy,bety,dx,dy;
+twiss,save,centre,file=twiss.out;
+plot, haxis=s, vaxis=betx, bety, colour=100;
+stop;
+
+
