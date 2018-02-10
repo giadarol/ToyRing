@@ -6,7 +6,7 @@ phase_adv_cell = np.pi/3
 n_cells_arc = 16 # to have zero dispersionin the SS needs to be a multiple of 4 
 n_arcs = 4
 n_dip_half_cell = 3
-n_cells_straight = 6
+n_regcells_straight = 6
 n_cells_insertion = 6
 
 frac_q_x = .27
@@ -14,11 +14,11 @@ frac_q_y = .295
 Qpx = 15.
 Qpy = 20.
 
-Qx = n_arcs*(n_cells_arc+n_cells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + frac_q_x
-Qy = n_arcs*(n_cells_arc+n_cells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + frac_q_y
+Qx = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + frac_q_x
+Qy = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + frac_q_y
 
 #Assumes DS made by an empty cell and a full cell
-circum = n_arcs*(n_cells_arc+n_cells_straight+4+n_cells_insertion)*L_halfcell*2.
+circum = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*L_halfcell*2.
 n_dip_total = n_arcs*(n_cells_arc+2)*n_dip_half_cell*2
 
 # Bending angle
@@ -135,9 +135,10 @@ for i_arc in xrange(n_arcs):
 
 
 	#Straight
-	for i_cell in xrange(n_cells_straight):
-		sequence += 'qf_ss%d_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
-		sequence += 'qd_ss%d_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+	for i_cell in xrange(n_regcells_straight/2):
+		sequence += 'at_qf_ss%dL_cell%d: marker at=%e;\n'%(i_arc, i_cell, s_start_cell)
+		sequence += 'qf_ss%dL_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
+		sequence += 'qd_ss%dL_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
 		s_start_cell += L_halfcell*2
 
 	#Insertion
@@ -160,6 +161,12 @@ for i_arc in xrange(n_arcs):
 	sequence += 'qf3R_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
 	sequence += 'qd4R_ss%d: qd4, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
 	s_start_cell += L_halfcell*2
+
+	for i_cell in xrange(n_regcells_straight/2):
+		sequence += 'at_qf_ss%dR_cell%d: marker at=%e;\n'%(i_arc, i_cell, s_start_cell)
+		sequence += 'qf_ss%d_cell%dR: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
+		sequence += 'qd_ss%d_cell%dR: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
 
 sequence+='''
 
@@ -211,6 +218,11 @@ endmatch;
 select,flag=twiss,column=name,s,x,y,mux,betx,
                          muy,bety,dx,dy, angle, k0l, k1l;
 twiss,save,centre,file=twiss.out;
+
+savebeta, label = leftb0, place = at_qf_ss0L_cell0;
+savebeta, label = rightb0, place = at_qf_ss0R_cell0;
+
+
 plot, haxis=s, vaxis=betx, bety, colour=100;
 plot, haxis=s, vaxis=dx, dy, colour=100;
 stop;

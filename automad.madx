@@ -34,6 +34,11 @@ endmatch;
 select,flag=twiss,column=name,s,x,y,mux,betx,
                          muy,bety,dx,dy, angle, k0l, k1l;
 twiss,save,centre,file=twiss.out;
+
+savebeta, label = leftb0, place = at_qf_ss0L_cell0;
+savebeta, label = rightb0, place = at_qf_ss0R_cell0;
+
+
 plot, haxis=s, vaxis=betx, bety, colour=100;
 plot, haxis=s, vaxis=dx, dy, colour=100;
 stop;
