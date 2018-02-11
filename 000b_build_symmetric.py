@@ -3,7 +3,7 @@ import numpy as np
 
 L_halfcell = 50.
 phase_adv_cell = np.pi/3
-n_cells_arc = 2 
+n_cells_arc = 3 #Must be odd
 n_arcs = 4
 n_dip_half_cell = 3
 n_regcells_straight = 4
@@ -17,16 +17,16 @@ frac_q_y = .295
 Qpx = 15.
 Qpy = 20.
 
-Qx = n_arcs*(n_cells_arc+1+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + 0.01
-Qy = n_arcs*(n_cells_arc+1+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + 0.02
+if np.mod(int(n_cells_arc), 2)==0:
+	raise ValueError('Number of cells per arc must be odd!')
 
-# #Assumes DS made by an empty cell and a full cell
-# circum = n_arcs*(n_cells_arc+1+n_regcells_straight+4+n_cells_insertion)*L_halfcell*2.
-# n_dip_total = n_arcs*(n_cells_arc+2+1.)*n_dip_half_cell*2
+Qx = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + 0.01
+Qy = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*phase_adv_cell/2./np.pi + 0.02
 
 #Assumes DS made by an empty cell and a full cell
-circum = n_arcs*(n_cells_arc+1+n_cells_insertion)*L_halfcell*2.
-n_dip_total = n_arcs*(n_cells_arc+1.)*n_dip_half_cell*2
+circum = n_arcs*(n_cells_arc+n_regcells_straight+4+n_cells_insertion)*L_halfcell*2.
+n_dip_total = n_arcs*(n_cells_arc+2)*n_dip_half_cell*2
+
 
 # Bending angle
 b_ang = 2.*np.pi/n_dip_total
@@ -36,7 +36,6 @@ focal_length = L_halfcell/np.sin(phase_adv_cell*1.111111) # I add 10% to avoid i
 k1l_quad = 1./focal_length
 
 # Start building sequence
-
 sequence = ''
 
 sequence+='''
@@ -91,7 +90,7 @@ s_start_cell = 0.
 for i_arc in xrange(n_arcs):
 
 	#Half Arc left
-	for i_cell in xrange(n_cells_arc/2):
+	for i_cell in xrange((n_cells_arc-1)/2):
 		
 		sequence += 'qf_arc%dl_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
 		sequence += 'sf_arc%dl_cell%d: sf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
@@ -105,55 +104,55 @@ for i_arc in xrange(n_arcs):
 									s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
 		s_start_cell += L_halfcell*2
 	
-	# #Dispesion suppressor - empty cell
-	# sequence += 'qf_arc%d_dslefte: qf, at=%e;\n'%(i_arc, s_start_cell)	
-	# sequence += 'qd_arc%d_dslefte: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	# s_start_cell += L_halfcell*2
-	# #Dispesion suppressor - full cell
-	# sequence += 'qf_arc%d_dsleftf: qf, at=%e;\n'%(i_arc, s_start_cell)	
-	# for i_bend in xrange(n_dip_half_cell):
-	# 	sequence += 'mb_arc%d_dsleft_%d: mb, at=%e;\n'%(i_arc, i_bend, 
-	# 							s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
-	# sequence += 'qd_arc%d_dsleftf: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	# for i_bend in xrange(n_dip_half_cell):
-	# 	sequence += 'mb_arc%d_dsleft_%d: mb, at=%e;\n'%(i_arc, i_bend+n_dip_half_cell, 
-	# 							s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
-	# s_start_cell += L_halfcell*2
+	#Dispesion suppressor - empty cell
+	sequence += 'qf_arc%d_dslefte: qf, at=%e;\n'%(i_arc, s_start_cell)	
+	sequence += 'qd_arc%d_dslefte: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	#Dispesion suppressor - full cell
+	sequence += 'qf_arc%d_dsleftf: qf, at=%e;\n'%(i_arc, s_start_cell)	
+	for i_bend in xrange(n_dip_half_cell):
+		sequence += 'mb_arc%d_dsleft_%d: mb, at=%e;\n'%(i_arc, i_bend, 
+								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
+	sequence += 'qd_arc%d_dsleftf: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	for i_bend in xrange(n_dip_half_cell):
+		sequence += 'mb_arc%d_dsleft_%d: mb, at=%e;\n'%(i_arc, i_bend+n_dip_half_cell, 
+								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
+	s_start_cell += L_halfcell*2
 
-	# #Straight left
-	# for i_cell in xrange(n_regcells_straight/2):
-	# 	sequence += 'at_qf_ss%dL_cell%d: marker at=%e;\n'%(i_arc, i_cell, s_start_cell)
-	# 	sequence += 'qf_ss%dL_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
-	# 	sequence += 'qd_ss%dL_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
-	# 	s_start_cell += L_halfcell*2
+	#Straight left
+	for i_cell in xrange(n_regcells_straight/2):
+		#sequence += 'at_qf_ss%dL_cell%d: marker at=%e;\n'%(i_arc, i_cell, s_start_cell)
+		sequence += 'qf_ss%dL_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
+		sequence += 'qd_ss%dL_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
 
 	#insertion
 	sequence += 'qf_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
 
-	# #Straight right
-	# for i_cell in xrange(n_regcells_straight/2):
-	# 	sequence += 'at_qd_ss%dR_cell%d: marker at=%e;\n'%(i_arc, i_cell, s_start_cell)
-	# 	sequence += 'qd_ss%dR_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell)
-	# 	sequence += 'qf_ss%dR_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
-	# 	s_start_cell += L_halfcell
+	#Straight right
+	for i_cell in xrange(n_regcells_straight/2):
+		#sequence += 'at_qd_ss%dR_cell%d: marker at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		sequence += 'qd_ss%dR_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		sequence += 'qf_ss%dR_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell*2)
+		s_start_cell += L_halfcell*2
 
-	# #Dispesion suppressor - full cell	
-	# for i_bend in xrange(n_dip_half_cell):
-	# 	sequence += 'mb_arc%d_dsright_%d: mb, at=%e;\n'%(i_arc, i_bend, 
-	# 							s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
-	# sequence += 'qd_arc%d_dsrightf: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	# for i_bend in xrange(n_dip_half_cell):
-	# 	sequence += 'mb_arc%d_dsright_%d: mb, at=%e;\n'%(i_arc, i_bend+n_dip_half_cell, 
-	# 							s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
-	# sequence += 'qf_arc%d_dsrightdf: qf, at=%e;\n'%(i_arc, s_start_cell+L_halfcell*2.)
-	# s_start_cell += L_halfcell*2
-	# #Dispesion suppressor - empty cell
-	# sequence += 'qd_arc%d_dsrighte: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)	
-	# sequence += 'qf_arc%d_dsrighte: qf, at=%e;\n'%(i_arc, s_start_cell+L_halfcell*2.)
-	# s_start_cell += L_halfcell*2
+	#Dispesion suppressor - full cell	
+	for i_bend in xrange(n_dip_half_cell):
+		sequence += 'mb_arc%d_dsright_%d: mb, at=%e;\n'%(i_arc, i_bend, 
+								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
+	sequence += 'qd_arc%d_dsrightf: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	for i_bend in xrange(n_dip_half_cell):
+		sequence += 'mb_arc%d_dsright_%d: mb, at=%e;\n'%(i_arc, i_bend+n_dip_half_cell, 
+								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
+	sequence += 'qf_arc%d_dsrightdf: qf, at=%e;\n'%(i_arc, s_start_cell+L_halfcell*2.)
+	s_start_cell += L_halfcell*2
+	#Dispesion suppressor - empty cell
+	sequence += 'qd_arc%d_dsrighte: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)	
+	sequence += 'qf_arc%d_dsrighte: qf, at=%e;\n'%(i_arc, s_start_cell+L_halfcell*2.)
+	s_start_cell += L_halfcell*2
 
 	#Half Arc right
-	for i_cell in xrange(n_cells_arc/2):
+	for i_cell in xrange((n_cells_arc-1)/2):
 
 		for i_bend in xrange(n_dip_half_cell):
 			sequence += 'mb_arc%dr_cell%d_%d: mb, at=%e;\n'%(i_arc, i_cell, i_bend, 
@@ -210,7 +209,6 @@ use, sequence=toyring;
 ! execute the TWISS command 
 twiss,save,centre,file=twiss.out;
 
-stop;
 
 ! match tune 
 match, sequence=toyring; 
