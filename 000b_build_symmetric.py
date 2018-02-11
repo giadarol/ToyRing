@@ -10,7 +10,7 @@ n_regcells_straight = 4
 n_cells_insertion = 5. #6 # don't touch
 betastar = 10.
 
-squeezed_IPs = [0,1,2,3] #zero must be there
+squeezed_IPs = [0,1,] #zero must be there
 
 frac_q_x = .31
 frac_q_y = .32
@@ -64,6 +64,20 @@ sd: multipole,knl:={0,0,ksd};'''
 
 
 sequence+='''
+kqfss:=kqf;
+kqdss:=kqd;
+qfss: multipole,knl:={0,kqfss};
+qdss: multipole,knl:={0,kqdss};
+
+kqfds1:=kqf;
+kqdds1:=kqd;
+qfds1: multipole,knl:={0,kqfds1};
+qdds1: multipole,knl:={0,kqdds1};
+kqfds2:=kqf;
+kqdds2:=kqd;
+qfds2: multipole,knl:={0,kqfds2};
+qdds2: multipole,knl:={0,kqdds2};
+
 kqf1:=kqf;
 kqd1:=kqd;
 kqf2:=kqf;
@@ -107,15 +121,15 @@ for i_arc in xrange(n_arcs):
 		s_start_cell += L_halfcell*2
 	
 	#Dispesion suppressor - empty cell
-	sequence += 'qf_arc%d_dslefte: qf, at=%e;\n'%(i_arc, s_start_cell)	
-	sequence += 'qd_arc%d_dslefte: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	sequence += 'qf_arc%d_dslefte: qfds2, at=%e;\n'%(i_arc, s_start_cell)	
+	sequence += 'qd_arc%d_dslefte: qdds2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
 	s_start_cell += L_halfcell*2
 	#Dispesion suppressor - full cell
-	sequence += 'qf_arc%d_dsleftf: qf, at=%e;\n'%(i_arc, s_start_cell)	
+	sequence += 'qf_arc%d_dsleftf: qfds1, at=%e;\n'%(i_arc, s_start_cell)	
 	for i_bend in xrange(n_dip_half_cell):
 		sequence += 'mb_arc%d_dsleft_%d: mb, at=%e;\n'%(i_arc, i_bend, 
 								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
-	sequence += 'qd_arc%d_dsleftf: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	sequence += 'qd_arc%d_dsleftf: qdds1, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
 	for i_bend in xrange(n_dip_half_cell):
 		sequence += 'mb_arc%d_dsleft_%d: mb, at=%e;\n'%(i_arc, i_bend+n_dip_half_cell, 
 								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
@@ -124,8 +138,8 @@ for i_arc in xrange(n_arcs):
 	#Straight left
 	for i_cell in xrange(n_regcells_straight/2):
 		#sequence += 'at_qf_ss%dL_cell%d: marker at=%e;\n'%(i_arc, i_cell, s_start_cell)
-		sequence += 'qf_ss%dL_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell)
-		sequence += 'qd_ss%dL_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		sequence += 'qf_ss%dL_cell%d: qfss, at=%e;\n'%(i_arc, i_cell, s_start_cell)
+		sequence += 'qd_ss%dL_cell%d: qdss, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
 		s_start_cell += L_halfcell*2
 
 	# #insertion
@@ -180,23 +194,23 @@ for i_arc in xrange(n_arcs):
 	#Straight right
 	for i_cell in xrange(n_regcells_straight/2):
 		#sequence += 'at_qd_ss%dR_cell%d: marker at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
-		sequence += 'qd_ss%dR_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
-		sequence += 'qf_ss%dR_cell%d: qf, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell*2)
+		sequence += 'qd_ss%dR_cell%d: qdss, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
+		sequence += 'qf_ss%dR_cell%d: qfss, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell*2)
 		s_start_cell += L_halfcell*2
 
 	#Dispesion suppressor - full cell	
 	for i_bend in xrange(n_dip_half_cell):
 		sequence += 'mb_arc%d_dsright_%d: mb, at=%e;\n'%(i_arc, i_bend, 
 								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1))
-	sequence += 'qd_arc%d_dsrightf: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	sequence += 'qd_arc%d_dsrightf: qdds1, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
 	for i_bend in xrange(n_dip_half_cell):
 		sequence += 'mb_arc%d_dsright_%d: mb, at=%e;\n'%(i_arc, i_bend+n_dip_half_cell, 
 								s_start_cell+(i_bend+1)*L_halfcell/(n_dip_half_cell+1)+L_halfcell)
-	sequence += 'qf_arc%d_dsrightdf: qf, at=%e;\n'%(i_arc, s_start_cell+L_halfcell*2.)
+	sequence += 'qf_arc%d_dsrightdf: qfds1, at=%e;\n'%(i_arc, s_start_cell+L_halfcell*2.)
 	s_start_cell += L_halfcell*2
 	#Dispesion suppressor - empty cell
-	sequence += 'qd_arc%d_dsrighte: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)	
-	sequence += 'qf_arc%d_dsrighte: qf, at=%e;\n'%(i_arc, s_start_cell+L_halfcell*2.)
+	sequence += 'qd_arc%d_dsrighte: qdds2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)	
+	sequence += 'qf_arc%d_dsrighte: qfds2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell*2.)
 	s_start_cell += L_halfcell*2
 
 	#Half Arc right
@@ -354,10 +368,17 @@ if flag_rematch_Q_Qp:
 	match, sequence=toyring; 
 		vary,name=kqf, step=0.00001; 
 		vary,name=kqd, step=0.00001; 
+		vary,name=kqfds1, step=0.00001; 
+		vary,name=kqdds1, step=0.00001; 
+		vary,name=kqfds2, step=0.00001; 
+		vary,name=kqdds2, step=0.00001; 
 		global,sequence=toyring,Q1=!!Qx_target!!; 
 		global,sequence=toyring,Q2=!!Qy_target!!; 
+		constraint,range=at_qf3L_ss0/at_qf3R_ss0,sequence=toyring,dx=0.0,dpx=0.0;
 		Lmdif, calls=10, tolerance=1.0e-21;
 	endmatch;
+
+	stop;
 
 	! re-match chromaticity 
 	match, sequence=toyring; 
@@ -367,6 +388,8 @@ if flag_rematch_Q_Qp:
 		global,sequence=toyring,DQ2=!!Qpy!!; 
 		Lmdif, calls=10, tolerance=1.0e-21;
 	endmatch;
+
+
 
 	use, sequence=toyring;
 	twiss, sequence=toyring,file=twiss.out;

@@ -69,10 +69,17 @@ twiss, sequence=toyring,file=twiss.out;
 	match, sequence=toyring; 
 		vary,name=kqf, step=0.00001; 
 		vary,name=kqd, step=0.00001; 
+		vary,name=kqfds1, step=0.00001; 
+		vary,name=kqdds1, step=0.00001; 
+		vary,name=kqfds2, step=0.00001; 
+		vary,name=kqdds2, step=0.00001; 
 		global,sequence=toyring,Q1=1.531000e+01; 
-		global,sequence=toyring,Q2=1.732000e+01; 
+		global,sequence=toyring,Q2=1.632000e+01; 
+		constraint,range=at_qf3L_ss0/at_qf3R_ss0,sequence=toyring,dx=0.0,dpx=0.0;
 		Lmdif, calls=10, tolerance=1.0e-21;
 	endmatch;
+
+	stop;
 
 	! re-match chromaticity 
 	match, sequence=toyring; 
@@ -82,6 +89,8 @@ twiss, sequence=toyring,file=twiss.out;
 		global,sequence=toyring,DQ2=2.000000e+01; 
 		Lmdif, calls=10, tolerance=1.0e-21;
 	endmatch;
+
+
 
 	use, sequence=toyring;
 	twiss, sequence=toyring,file=twiss.out;
