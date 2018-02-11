@@ -17,8 +17,8 @@ twiss,save,centre,file=twiss.out;
 match, sequence=toyring; 
 	vary,name=kqf, step=0.00001; 
 	vary,name=kqd, step=0.00001; 
-	global,sequence=toyring,Q1=1.067667e+01; 
-	global,sequence=toyring,Q2=1.068667e+01; 
+	global,sequence=toyring,Q1=1.601000e+01; 
+	global,sequence=toyring,Q2=1.602000e+01; 
 	Lmdif, calls=10, tolerance=1.0e-21;
 endmatch;
 
@@ -62,5 +62,30 @@ use, sequence=toyring;
 twiss, sequence=toyring,file=twiss.out;
 
 
-stop;
 
+
+
+	! re-match tune 
+	match, sequence=toyring; 
+		vary,name=kqf, step=0.00001; 
+		vary,name=kqd, step=0.00001; 
+		global,sequence=toyring,Q1=1.531000e+01; 
+		global,sequence=toyring,Q2=1.732000e+01; 
+		Lmdif, calls=10, tolerance=1.0e-21;
+	endmatch;
+
+	! re-match chromaticity 
+	match, sequence=toyring; 
+		vary,name=ksf, step=0.00001; 
+		vary,name=ksd, step=0.00001; 
+		global,sequence=toyring,DQ1=1.500000e+01; 
+		global,sequence=toyring,DQ2=2.000000e+01; 
+		Lmdif, calls=10, tolerance=1.0e-21;
+	endmatch;
+
+	use, sequence=toyring;
+	twiss, sequence=toyring,file=twiss.out;
+
+	stop;
+
+	

@@ -3,7 +3,7 @@ import numpy as np
 
 L_halfcell = 50.
 phase_adv_cell = np.pi/3
-n_cells_arc = 3 #Must be odd
+n_cells_arc = 11 #Must be odd
 n_arcs = 4
 n_dip_half_cell = 3
 n_regcells_straight = 4
@@ -12,10 +12,12 @@ betastar = 10.
 
 squeezed_IPs = [0,1,2,3] #zero must be there
 
-frac_q_x = .27
-frac_q_y = .295
+frac_q_x = .31
+frac_q_y = .32
 Qpx = 15.
 Qpy = 20.
+
+flag_rematch_Q_Qp = True
 
 if np.mod(int(n_cells_arc), 2)==0:
 	raise ValueError('Number of cells per arc must be odd!')
@@ -129,27 +131,50 @@ for i_arc in xrange(n_arcs):
 	# #insertion
 	# sequence += 'qf_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
 	
-	#Insertion
-	sequence += 'at_qf3L_ss%d: marker at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qf3L_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd3L_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
-	sequence += 'qf2L_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd2L_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
-	sequence += 'qf1L_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd1_ss%d: qd1, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	sequence += 'at_IP%d: marker at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
+	if i_arc in squeezed_IPs:
+		#Insertion
+		sequence += 'at_qf3L_ss%d: marker at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qf3L_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd3L_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf2L_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd2L_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf1L_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd1_ss%d: qd1, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		sequence += 'at_IP%d: marker at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
 
-	sequence += 'qf1R_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd2R_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
-	sequence += 'qf2R_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'qd3R_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
-	s_start_cell += L_halfcell*2
-	sequence += 'qf3R_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
-	sequence += 'at_qf3R_ss%d: marker at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qf1R_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd2R_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf2R_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd3R_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf3R_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'at_qf3R_ss%d: marker at=%e;\n'%(i_arc, s_start_cell)
+	else:
+		#Insertion
+		sequence += 'at_qf3L_ss%d: marker at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qf3L_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd3L_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf2L_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd2L_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf1L_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd1_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		sequence += 'at_IP%d: marker at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+
+		sequence += 'qf1R_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd2R_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf2R_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'qd3R_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		s_start_cell += L_halfcell*2
+		sequence += 'qf3R_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+		sequence += 'at_qf3R_ss%d: marker at=%e;\n'%(i_arc, s_start_cell)
 
 
 	#Straight right
@@ -291,68 +316,67 @@ stop;
 
 '''
 
-
-
 with open('automad.madx', 'w') as fid:
 	fid.write(madxscript)
 
 import os
 os.system('../madx automad.madx')
 
-# Rematch fractional tunes and chromaticity
-import metaclass as mtc
-fname = 'twiss.out'
-ob = mtc.twiss(fname)
 
-wurstel
-
-print('Obtained: Q1=%.4f Q2=%.4f'%(ob.Q1, ob.Q2))
-
-#strategy 1
-Qx_integ = np.floor(ob.Q1)
-Qy_integ = np.floor(ob.Q2)
-Qx_target = Qx_integ + frac_q_x
-Qy_target = Qy_integ + frac_q_y
-
-if np.abs(Qx_target-ob.Q1)>np.abs(Qx_target+1.-ob.Q1):
-	Qx_target = Qx_target+1.
-if np.abs(Qy_target-ob.Q2)>np.abs(Qy_target+1.-ob.Q2):
-	Qy_target = Qy_target+1.
+if flag_rematch_Q_Qp:
+	# Rematch fractional tunes and chromaticity
+	import metaclass as mtc
+	fname = 'twiss.out'
+	ob = mtc.twiss(fname)
 
 
+	print('Obtained: Q1=%.4f Q2=%.4f'%(ob.Q1, ob.Q2))
 
-print('Targets: Qx=%.4f Q2=%.4f'%(Qx_target, Qy_target))
+	#strategy 1
+	Qx_integ = np.floor(ob.Q1)
+	Qy_integ = np.floor(ob.Q2)
+	Qx_target = Qx_integ + frac_q_x
+	Qy_target = Qy_integ + frac_q_y
 
-madxscript = madxscript.replace('stop;', '')
+	if np.abs(Qx_target-ob.Q1)>np.abs(Qx_target+1.-ob.Q1):
+		Qx_target = Qx_target+1.
+	if np.abs(Qy_target-ob.Q2)>np.abs(Qy_target+1.-ob.Q2):
+		Qy_target = Qy_target+1.
 
-madxscript+='''
-! re-match tune 
-match, sequence=toyring; 
-	vary,name=kqf, step=0.00001; 
-	vary,name=kqd, step=0.00001; 
-	global,sequence=toyring,Q1=!!Qx_target!!; 
-	global,sequence=toyring,Q2=!!Qy_target!!; 
-	Lmdif, calls=10, tolerance=1.0e-21;
-endmatch;
 
-! re-match chromaticity 
-match, sequence=toyring; 
-	vary,name=ksf, step=0.00001; 
-	vary,name=ksd, step=0.00001; 
-	global,sequence=toyring,DQ1=!!Qpx!!; 
-	global,sequence=toyring,DQ2=!!Qpy!!; 
-	Lmdif, calls=10, tolerance=1.0e-21;
-endmatch;
 
-use, sequence=toyring;
-twiss, sequence=toyring,file=twiss.out;
+	print('Targets: Qx=%.4f Q2=%.4f'%(Qx_target, Qy_target))
 
-stop;
+	madxscript = madxscript.replace('stop;', '')
 
-'''.replace('!!Qx_target!!','%e'%Qx_target).replace('!!Qy_target!!','%e'%Qy_target).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)
-    
+	madxscript+='''
+	! re-match tune 
+	match, sequence=toyring; 
+		vary,name=kqf, step=0.00001; 
+		vary,name=kqd, step=0.00001; 
+		global,sequence=toyring,Q1=!!Qx_target!!; 
+		global,sequence=toyring,Q2=!!Qy_target!!; 
+		Lmdif, calls=10, tolerance=1.0e-21;
+	endmatch;
 
-import os
-with open('automad.madx', 'w') as fid:
-	fid.write(madxscript)
-os.system('../madx automad.madx')
+	! re-match chromaticity 
+	match, sequence=toyring; 
+		vary,name=ksf, step=0.00001; 
+		vary,name=ksd, step=0.00001; 
+		global,sequence=toyring,DQ1=!!Qpx!!; 
+		global,sequence=toyring,DQ2=!!Qpy!!; 
+		Lmdif, calls=10, tolerance=1.0e-21;
+	endmatch;
+
+	use, sequence=toyring;
+	twiss, sequence=toyring,file=twiss.out;
+
+	stop;
+
+	'''.replace('!!Qx_target!!','%e'%Qx_target).replace('!!Qy_target!!','%e'%Qy_target).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)
+	    
+
+	import os
+	with open('automad.madx', 'w') as fid:
+		fid.write(madxscript)
+	os.system('../madx automad.madx')
