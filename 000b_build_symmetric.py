@@ -7,7 +7,7 @@ n_cells_arc = 3 #Must be odd
 n_arcs = 4
 n_dip_half_cell = 3
 n_regcells_straight = 4
-n_cells_insertion = 0. #6 # don't touch
+n_cells_insertion = 5. #6 # don't touch
 betastar = 10.
 
 squeezed_IPs = [0,1,2,3] #zero must be there
@@ -126,8 +126,31 @@ for i_arc in xrange(n_arcs):
 		sequence += 'qd_ss%dL_cell%d: qd, at=%e;\n'%(i_arc, i_cell, s_start_cell+L_halfcell)
 		s_start_cell += L_halfcell*2
 
-	#insertion
-	sequence += 'qf_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+	# #insertion
+	# sequence += 'qf_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
+	
+	#Insertion
+	sequence += 'at_qf3L_ss%d: marker at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qf3L_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd3L_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	sequence += 'qf2L_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd2L_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	sequence += 'qf1L_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd1_ss%d: qd1, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	sequence += 'at_IP%d: marker at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+
+	sequence += 'qf1R_ss%d: qf1, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd2R_ss%d: qd2, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	sequence += 'qf2R_ss%d: qf2, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'qd3R_ss%d: qd3, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+	s_start_cell += L_halfcell*2
+	sequence += 'qf3R_ss%d: qf3, at=%e;\n'%(i_arc, s_start_cell)
+	sequence += 'at_qf3R_ss%d: marker at=%e;\n'%(i_arc, s_start_cell)
+
 
 	#Straight right
 	for i_cell in xrange(n_regcells_straight/2):
@@ -233,29 +256,32 @@ select,flag=twiss,column=name,s,x,y,mux,betx,
                          muy,bety,dx,dy, angle, k0l, k1l;
 twiss,save,centre,file=twiss.out;
 '''.replace('!!Qx!!', '%e'%Qx).replace('!!Qy!!', '%e'%Qy).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)
-# '''
-# ! another twiss saving the betas
-# use, period=toyring;
-# savebeta, label = leftb0, place = at_qf_ss0L_cell0;
-# savebeta, label = rightb0, place = at_qf_ss0R_cell0;
-# select,flag=twiss,column=name,s,mux,muy,betx,alfx,bety,alfy,dx;
-# twiss,centre,file=twiss.out;'''
-# ! twiss only the IR
-# use, sequence=toyring, range=at_qf_ss0L_cell0/at_qf_ss0R_cell0;
-# twiss, beta0=leftb0,sequence=toyring,file=twissIR.out; 
 
-# kqd1 = 0.0;
-# use, sequence=toyring, range=at_qf_ss0L_cell0/at_IP0; 
-# match, sequence=toyring,beta0=leftb0;
-#    vary,name=kqf3, step=0.00001;
-#    vary,name=kqd3, step=0.00001;
-#    vary,name=kqf2, step=0.00001;
-#    vary,name=kqd2, step=0.00001;
-#    vary,name=kqf1, step=0.00001;
-#    constraint,range=at_IP0,sequence=toyring,betx=!!betastar!!,bety=!!betastar!!,alfx=0.0,
-#                                         alfy=0.0,dx=0.0,dpx=0.0;
-# Lmdif, calls=100, tolerance=1.0e-21; endmatch;
-# '''+.replace('!!betastar!!', '%e'%betastar)\
+
+madxscript+= '''
+! another twiss saving the betas
+use, period=toyring;
+savebeta, label = leftb0, place = at_qf3L_ss0;
+savebeta, label = rightb0, place = at_qf3R_ss0;
+select,flag=twiss,column=name,s,mux,muy,betx,alfx,bety,alfy,dx;
+twiss,centre,file=twiss.out;
+! twiss only the IR
+use, sequence=toyring, range=at_qf3L_ss0/at_qf3R_ss0;
+twiss, beta0=leftb0,sequence=toyring,file=twissIR.out; 
+
+kqd1 = 0.0;
+use, sequence=toyring, range=at_qf3L_ss0/at_IP0; 
+match, sequence=toyring,beta0=leftb0;
+   vary,name=kqf3, step=0.00001;
+   vary,name=kqd3, step=0.00001;
+   vary,name=kqf2, step=0.00001;
+   vary,name=kqd2, step=0.00001;
+   vary,name=kqf1, step=0.00001;
+   constraint,range=at_IP0,sequence=toyring,betx=!!betastar!!,bety=!!betastar!!,alfx=0.0,
+                                        alfy=0.0,dx=0.0,dpx=0.0;
+Lmdif, calls=100, tolerance=1.0e-21; endmatch;
+'''.replace('!!betastar!!', '%e'%betastar)
+
 madxscript+='''
 use, sequence=toyring;
 twiss, sequence=toyring,file=twiss.out;
