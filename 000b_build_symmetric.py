@@ -378,7 +378,6 @@ if flag_rematch_Q_Qp:
 		Lmdif, calls=10, tolerance=1.0e-21;
 	endmatch;
 
-	stop;
 
 	! re-match chromaticity 
 	match, sequence=toyring; 
@@ -390,8 +389,9 @@ if flag_rematch_Q_Qp:
 	endmatch;
 
 
-
 	use, sequence=toyring;
+	select, flag=twiss, clear;
+	select, flag=twiss, column= name, keyword,s,l,betx, bety,dx,dy,x,y, angle, k0l, k1l,k2l;
 	twiss, sequence=toyring,file=twiss.out;
 
 	stop;
