@@ -43,8 +43,13 @@ qd3: multipole,knl:={0,kqd3};
 qf4: multipole,knl:={0,kqf4};
 qd4: multipole,knl:={0,kqd4};
 
+CAV: RFCAVITY, L := 0.;
+
+
+
 circum = 9.600000e+03;
 toyring: sequence, refer=centre, l=circum; 
+CAV1:CAV, at=0.;
 
 qf_arc0l_cell0: qf, at=0.000000e+00;
 sf_arc0l_cell0: sf, at=0.000000e+00;

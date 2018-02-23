@@ -10,6 +10,9 @@ n_regcells_straight = 4
 n_cells_insertion = 5. #6 # don't touch
 betastar = 10.
 
+VRF_MV = 4.
+LAGRF = 0.5
+
 squeezed_IPs = [0,1,] #zero must be there
 
 frac_q_x = .31
@@ -93,12 +96,17 @@ qd2: multipole,knl:={0,kqd2};
 qf3: multipole,knl:={0,kqf3};
 qd3: multipole,knl:={0,kqd3};
 qf4: multipole,knl:={0,kqf4};
-qd4: multipole,knl:={0,kqd4};'''
+qd4: multipole,knl:={0,kqd4};
+
+CAV: RFCAVITY, L := 0.;
+
+'''
 
 sequence+='''
 
 circum = %e;
 toyring: sequence, refer=centre, l=circum; 
+CAV1:CAV, at=0.;
 
 '''%circum
 
@@ -267,6 +275,8 @@ beam, particle = proton, sequence=toyring, energy = 6500., NPART=1.05E11, sige= 
 ! define the desired output
 use, sequence=toyring; 
 
+CAV1, volt=!!VRF!!, lag=!!LAG!!;
+
 
 ! execute the TWISS command 
 twiss,save,centre,file=twiss.out;
@@ -294,7 +304,8 @@ endmatch;
 select,flag=twiss,column=name,s,x,y,mux,betx,
                          muy,bety,dx,dy, angle, k0l, k1l;
 twiss,save,centre,file=twiss.out;
-'''.replace('!!Qx!!', '%e'%Qx).replace('!!Qy!!', '%e'%Qy).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)
+'''.replace('!!Qx!!', '%e'%Qx).replace('!!Qy!!', '%e'%Qy).replace(
+	'!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy).replace('!!VRF!!', '%e'%VRF_MV).replace('!!LAG!!', '%e'%LAGRF)
 
 
 madxscript+= '''

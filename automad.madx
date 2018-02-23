@@ -8,6 +8,8 @@ beam, particle = proton, sequence=toyring, energy = 6500., NPART=1.05E11, sige= 
 ! define the desired output
 use, sequence=toyring; 
 
+CAV1, volt=4.000000e+00, lag=5.000000e-01;
+
 
 ! execute the TWISS command 
 twiss,save,centre,file=twiss.out;
@@ -92,7 +94,7 @@ twiss, sequence=toyring,file=twiss.out;
 
 	use, sequence=toyring;
 	select, flag=twiss, clear;
-	select, flag=twiss, column= name, keyword,s,l,betx, bety,dx,dy,x,y, angle, k0l, k1l,k2l;
+	select, flag=twiss, column= name, keyword,s,l,betx, bety,dx,dy,x,y, angle, k0l, k1l,k2l, lag, volt;
 	twiss, sequence=toyring,file=twiss.out;
 
 	stop;
