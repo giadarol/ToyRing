@@ -23,8 +23,8 @@ cavity_at_IP = 3
 
 frac_q_x = .28
 frac_q_y = .31
-Qpx = 15.
-Qpy = 20.
+Qpx = 0.#15.
+Qpy = 0.#20.
 
 flag_rematch_Q_Qp = True
 

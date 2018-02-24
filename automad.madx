@@ -28,8 +28,8 @@ endmatch;
 match, sequence=toyring; 
 	vary,name=ksf, step=0.00001; 
 	vary,name=ksd, step=0.00001; 
-	global,sequence=toyring,DQ1=1.500000e+01; 
-	global,sequence=toyring,DQ2=2.000000e+01; 
+	global,sequence=toyring,DQ1=0.000000e+00; 
+	global,sequence=toyring,DQ2=0.000000e+00; 
 	Lmdif, calls=10, tolerance=1.0e-21;
 endmatch;
 
@@ -85,8 +85,8 @@ twiss, sequence=toyring,file=twiss.out;
 	match, sequence=toyring; 
 		vary,name=ksf, step=0.00001; 
 		vary,name=ksd, step=0.00001; 
-		global,sequence=toyring,DQ1=1.500000e+01; 
-		global,sequence=toyring,DQ2=2.000000e+01; 
+		global,sequence=toyring,DQ1=0.000000e+00; 
+		global,sequence=toyring,DQ2=0.000000e+00; 
 		Lmdif, calls=10, tolerance=1.0e-21;
 	endmatch;
 
