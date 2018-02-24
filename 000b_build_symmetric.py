@@ -3,8 +3,8 @@ import numpy as np
 
 L_halfcell = 50.
 phase_adv_cell = np.pi/3
-n_cells_arc = 21 #Must be odd
-n_arcs = 8
+n_cells_arc = 29  #Must be odd
+n_arcs = 6
 n_dip_half_cell = 1
 n_regcells_straight = 4
 n_cells_insertion = 5. #6 # don't touch
@@ -17,12 +17,12 @@ h_RF=35000
 
 flag_tracking = True
 
-squeezed_IPs = [0,1,] #zero must be there
+squeezed_IPs = [0,1] #zero must be there
 
 cavity_at_IP = 3
 
-frac_q_x = .31
-frac_q_y = .32
+frac_q_x = .28
+frac_q_y = .31
 Qpx = 15.
 Qpy = 20.
 
