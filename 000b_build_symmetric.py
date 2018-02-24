@@ -10,10 +10,14 @@ n_regcells_straight = 4
 n_cells_insertion = 5. #6 # don't touch
 betastar = 10.
 
-VRF_MV = 4.
+VRF_MV = 0.8
 LAGRF = 0.5
 
+flag_tracking = True
+
 squeezed_IPs = [0,1,] #zero must be there
+
+cavity_at_IP = 3
 
 frac_q_x = .31
 frac_q_y = .32
@@ -106,7 +110,6 @@ sequence+='''
 
 circum = %e;
 toyring: sequence, refer=centre, l=circum; 
-CAV1:CAV, at=0.;
 
 '''%circum
 
@@ -187,6 +190,8 @@ for i_arc in xrange(n_arcs):
 		sequence += 'qf1L_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
 		sequence += 'qd1_ss%d: qd, at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
 		sequence += 'at_IP%d: marker at=%e;\n'%(i_arc, s_start_cell+L_halfcell)
+		if i_arc == cavity_at_IP:
+			sequence += 'CAV1: CAV, at=%e;\n'%(s_start_cell+L_halfcell)
 		s_start_cell += L_halfcell*2
 
 		sequence += 'qf1R_ss%d: qf, at=%e;\n'%(i_arc, s_start_cell)
@@ -275,7 +280,7 @@ beam, particle = proton, sequence=toyring, energy = 6500., NPART=1.05E11, sige= 
 ! define the desired output
 use, sequence=toyring; 
 
-CAV1, volt=!!VRF!!, lag=!!LAG!!;
+CAV1, volt=!!VRF!!, lag=!!LAG!!, harmon=9000;
 
 
 ! execute the TWISS command 
@@ -405,10 +410,28 @@ if flag_rematch_Q_Qp:
 	select, flag=twiss, column= name, keyword,s,l,betx, bety,dx,dy,x,y, angle, k0l, k1l,k2l;
 	twiss, sequence=toyring,file=twiss.out;
 
-	stop;
+	
 
 	'''.replace('!!Qx_target!!','%e'%Qx_target).replace('!!Qy_target!!','%e'%Qy_target).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)
 	    
+if flag_tracking:
+	madxscript += """
+	track, dump;
+	"""
+	
+	for dp in np.linspace(0, 1e-4, 10):
+		madxscript+="""
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=%e;"""%dp
+	
+	madxscript+="""
+	run, turns=2048;"""
+
+	madxscript+="""
+	endtrack;
+
+	stop;
+
+	"""
 
 	import os
 	with open('automad.madx', 'w') as fid:

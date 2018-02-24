@@ -49,7 +49,6 @@ CAV: RFCAVITY, L := 0.;
 
 circum = 9.600000e+03;
 toyring: sequence, refer=centre, l=circum; 
-CAV1:CAV, at=0.;
 
 qf_arc0l_cell0: qf, at=0.000000e+00;
 sf_arc0l_cell0: sf, at=0.000000e+00;
@@ -573,6 +572,7 @@ qd2L_ss3: qd, at=8.250000e+03;
 qf1L_ss3: qf, at=8.300000e+03;
 qd1_ss3: qd, at=8.350000e+03;
 at_IP3: marker at=8.350000e+03;
+CAV1: CAV, at=8.350000e+03;
 qf1R_ss3: qf, at=8.400000e+03;
 qd2R_ss3: qd, at=8.450000e+03;
 qf2R_ss3: qf, at=8.500000e+03;

@@ -8,7 +8,7 @@ beam, particle = proton, sequence=toyring, energy = 6500., NPART=1.05E11, sige= 
 ! define the desired output
 use, sequence=toyring; 
 
-CAV1, volt=4.000000e+00, lag=5.000000e-01;
+CAV1, volt=8.000000e-01, lag=5.000000e-01, harmon=9000;
 
 
 ! execute the TWISS command 
@@ -75,8 +75,8 @@ twiss, sequence=toyring,file=twiss.out;
 		vary,name=kqdds1, step=0.00001; 
 		vary,name=kqfds2, step=0.00001; 
 		vary,name=kqdds2, step=0.00001; 
-		global,sequence=toyring,Q1=1.531000e+01; 
-		global,sequence=toyring,Q2=1.632000e+01; 
+		global,sequence=toyring,Q1=1.731000e+01; 
+		global,sequence=toyring,Q2=1.532000e+01; 
 		constraint,range=at_qf3L_ss0/at_qf3R_ss0,sequence=toyring,dx=0.0,dpx=0.0;
 		Lmdif, calls=10, tolerance=1.0e-21;
 	endmatch;
@@ -94,8 +94,26 @@ twiss, sequence=toyring,file=twiss.out;
 
 	use, sequence=toyring;
 	select, flag=twiss, clear;
-	select, flag=twiss, column= name, keyword,s,l,betx, bety,dx,dy,x,y, angle, k0l, k1l,k2l, lag, volt;
+	select, flag=twiss, column= name, keyword,s,l,betx, bety,dx,dy,x,y, angle, k0l, k1l,k2l;
 	twiss, sequence=toyring,file=twiss.out;
+
+	
+
+	
+	track, dump;
+	
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=0.000000e+00;
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=1.111111e-05;
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=2.222222e-05;
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=3.333333e-05;
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=4.444444e-05;
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=5.555556e-05;
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=6.666667e-05;
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=7.777778e-05;
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=8.888889e-05;
+			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=1.000000e-04;
+	run, turns=2048;
+	endtrack;
 
 	stop;
 
