@@ -1,6 +1,8 @@
 import metaclass as mtc
 import numpy as np
 
+from scipy.constants import c as c_light
+
 import matplotlib.pyplot as pl
 pl.close('all')
 
@@ -21,8 +23,8 @@ for ii in range(10):
 	pl.plot(ob.PT)
 
 	pl.figure(3)
-	pl.plot(ob.T, ob.PT)
-
+	pl.plot(ob.T/c_light*1e9, ob.PT)
+	pl.grid('on')
 
 
 pl.show()

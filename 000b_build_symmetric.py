@@ -3,15 +3,17 @@ import numpy as np
 
 L_halfcell = 50.
 phase_adv_cell = np.pi/3
-n_cells_arc = 11 #Must be odd
-n_arcs = 4
-n_dip_half_cell = 3
+n_cells_arc = 21 #Must be odd
+n_arcs = 8
+n_dip_half_cell = 1
 n_regcells_straight = 4
 n_cells_insertion = 5. #6 # don't touch
 betastar = 10.
 
-VRF_MV = 0.8
-LAGRF = 0.5
+energy_GeV = 450.
+VRF_MV = 10.
+Lag_RF = 0.5
+h_RF=35000
 
 flag_tracking = True
 
@@ -275,12 +277,12 @@ TITLE, 'Toyring';
 call file="sequence.seq";
 
 !define the beam and its properties
-beam, particle = proton, sequence=toyring, energy = 6500., NPART=1.05E11, sige= 2.5e;
+beam, particle = proton, sequence=toyring, energy = !!ENE!!, NPART=1.05E11, sige= 2.5e;
 
 ! define the desired output
 use, sequence=toyring; 
 
-CAV1, volt=!!VRF!!, lag=!!LAG!!, harmon=9000;
+CAV1, volt:=0.1, lag:=0.5, harmon:=!!HRF!!;
 
 
 ! execute the TWISS command 
@@ -310,7 +312,9 @@ select,flag=twiss,column=name,s,x,y,mux,betx,
                          muy,bety,dx,dy, angle, k0l, k1l;
 twiss,save,centre,file=twiss.out;
 '''.replace('!!Qx!!', '%e'%Qx).replace('!!Qy!!', '%e'%Qy).replace(
-	'!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy).replace('!!VRF!!', '%e'%VRF_MV).replace('!!LAG!!', '%e'%LAGRF)
+	'!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy).replace('!!ENE!!', '%e'%energy_GeV).replace('!!HRF!!', '%d'%h_RF)
+	
+
 
 
 madxscript+= '''
@@ -336,13 +340,11 @@ match, sequence=toyring,beta0=leftb0;
                                         alfy=0.0,dx=0.0,dpx=0.0;
 Lmdif, calls=100, tolerance=1.0e-21; endmatch;
 '''.replace('!!betastar!!', '%e'%betastar)
-
 madxscript+='''
 use, sequence=toyring;
 twiss, sequence=toyring,file=twiss.out;
 
 
-stop;
 
 '''
 
@@ -410,21 +412,24 @@ if flag_rematch_Q_Qp:
 	select, flag=twiss, column= name, keyword,s,l,betx, bety,dx,dy,x,y, angle, k0l, k1l,k2l;
 	twiss, sequence=toyring,file=twiss.out;
 
-	
+
 
 	'''.replace('!!Qx_target!!','%e'%Qx_target).replace('!!Qy_target!!','%e'%Qy_target).replace('!!Qpx!!', '%e'%Qpx).replace('!!Qpy!!', '%e'%Qpy)
 	    
 if flag_tracking:
 	madxscript += """
+	CAV1, volt:=!!VRF!!, lag:=!!LAGRF!!, harmon:=!!HRF!!;
+	SHOW, CAV1;
+
 	track, dump;
-	"""
+	""".replace('!!VRF!!','%e'%VRF_MV).replace('!!LAGRF!!', '%e'%Lag_RF).replace('!!HRF!!', '%d'%h_RF)
 	
-	for dp in np.linspace(0, 1e-4, 10):
+	for dp in np.linspace(0, 8e-4, 10):
 		madxscript+="""
 			start, x=1e-3, px=0., y=-0.5e-3, py=0., t=0., pt=%e;"""%dp
 	
 	madxscript+="""
-	run, turns=2048;"""
+	run, turns=512;"""
 
 	madxscript+="""
 	endtrack;
